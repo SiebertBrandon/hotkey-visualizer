@@ -1,0 +1,39 @@
+<div class="hotkey-visualizer-content">
+  <header class="hotkey-visualizer-header">
+    <div class="hotkey-visualizer-search">
+      <i class="fa-solid fa-magnifying-glass"></i>
+      <input type="text" data-action="search"
+             placeholder="{{localize 'HOTKEYVIS.SearchPlaceholder'}}" autocomplete="off">
+    </div>
+    <div class="hotkey-visualizer-bulk">
+      <button type="button" data-action="selectAll">
+        <i class="fa-solid fa-check-double"></i> {{localize 'HOTKEYVIS.SelectAll'}}
+      </button>
+      <button type="button" data-action="selectNone">
+        <i class="fa-solid fa-xmark"></i> {{localize 'HOTKEYVIS.SelectNone'}}
+      </button>
+    </div>
+  </header>
+
+  <p class="hotkey-visualizer-notice">{{localize 'HOTKEYVIS.ToggleNotice'}}</p>
+
+  <div class="hotkey-visualizer-list">
+    {{#each groups as |group|}}
+      <section class="hotkey-visualizer-group" data-namespace="{{group.namespace}}">
+        <h2 class="hotkey-visualizer-group-title">{{group.label}}</h2>
+        {{#each group.actions as |action|}}
+          <label class="hotkey-visualizer-toggle-row" data-search="{{action.name}} {{action.hint}}">
+            <input type="checkbox" name="{{action.settingKey}}" {{checked action.visible}}>
+            <span class="hotkey-visualizer-toggle-label">
+              <span class="hotkey-visualizer-name">{{action.name}}</span>
+              {{#each action.badges as |badge|}}
+                <span class="hotkey-visualizer-badge {{badge.cls}}">{{badge.label}}</span>
+              {{/each}}
+              {{#if action.hint}}<span class="hotkey-visualizer-hint">{{action.hint}}</span>{{/if}}
+            </span>
+          </label>
+        {{/each}}
+      </section>
+    {{/each}}
+  </div>
+</div>

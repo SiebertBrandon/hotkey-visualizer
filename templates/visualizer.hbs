@@ -1,0 +1,64 @@
+<div class="hotkey-visualizer-content">
+  <header class="hotkey-visualizer-header">
+    <div class="hotkey-visualizer-search">
+      <i class="fa-solid fa-magnifying-glass"></i>
+      <input type="text" data-action="search"
+             placeholder="{{localize 'HOTKEYVIS.SearchPlaceholder'}}" autocomplete="off">
+    </div>
+    <div class="hotkey-visualizer-stats">
+      {{localize 'HOTKEYVIS.ShownCount' shown=shown total=total}}
+    </div>
+  </header>
+
+  {{#if empty}}
+    <p class="hotkey-visualizer-empty notification">{{localize 'HOTKEYVIS.NoneVisible'}}</p>
+  {{else}}
+    <div class="hotkey-visualizer-list">
+      {{#each groups as |group|}}
+        <section class="hotkey-visualizer-group" data-namespace="{{group.namespace}}">
+          <h2 class="hotkey-visualizer-group-title">{{group.label}}</h2>
+          <div class="hotkey-visualizer-rows">
+            {{#each group.actions as |action|}}
+              <div class="hotkey-visualizer-row" data-search="{{action.name}} {{action.hint}}">
+                <div class="hotkey-visualizer-row-main">
+                  <div class="hotkey-visualizer-row-title">
+                    <span class="hotkey-visualizer-name">{{action.name}}</span>
+                    {{#each action.badges as |badge|}}
+                      <span class="hotkey-visualizer-badge {{badge.cls}}">{{badge.label}}</span>
+                    {{/each}}
+                  </div>
+                  {{#if action.hint}}
+                    <p class="hotkey-visualizer-hint">{{action.hint}}</p>
+                  {{/if}}
+                  {{#if action.hasReserved}}
+                    <p class="hotkey-visualizer-reserved">
+                      {{localize 'HOTKEYVIS.ReservedModifiers'}}
+                      {{#each action.reserved as |mod|}}
+                        <kbd class="hotkey-chip {{mod.cls}}">{{mod.label}}</kbd>
+                      {{/each}}
+                    </p>
+                  {{/if}}
+                </div>
+                <div class="hotkey-visualizer-row-keys">
+                  {{#if action.hasBindings}}
+                    {{#each action.bindings as |binding|}}
+                      <span class="hotkey-binding">
+                        {{#each binding.modifiers as |mod|}}
+                          <kbd class="hotkey-chip {{mod.cls}}">{{mod.label}}</kbd>
+                          <span class="hotkey-plus">+</span>
+                        {{/each}}
+                        <kbd class="hotkey-chip hotkey-key">{{binding.keyLabel}}</kbd>
+                      </span>
+                    {{/each}}
+                  {{else}}
+                    <span class="hotkey-unbound">{{localize 'HOTKEYVIS.Unbound'}}</span>
+                  {{/if}}
+                </div>
+              </div>
+            {{/each}}
+          </div>
+        </section>
+      {{/each}}
+    </div>
+  {{/if}}
+</div>
