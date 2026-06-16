@@ -6,6 +6,7 @@
 
 import { MODULE_ID } from "../constants.mjs";
 import { collectKeybindings } from "../keybindings.mjs";
+import { buildKeyboardView } from "../keyboard.mjs";
 
 const { ApplicationV2, HandlebarsApplicationMixin } = foundry.applications.api;
 
@@ -13,6 +14,9 @@ export class HotkeyVisualizer extends HandlebarsApplicationMixin(ApplicationV2) 
 
   /** @type {HotkeyVisualizer|null} Singleton instance. */
   static #instance = null;
+
+  /** @type {"list"|"keyboard"} Current view mode. */
+  #view = "list";
 
   /** @override */
   static DEFAULT_OPTIONS = {
@@ -25,8 +29,11 @@ export class HotkeyVisualizer extends HandlebarsApplicationMixin(ApplicationV2) 
       resizable: true
     },
     position: {
-      width: 720,
+      width: 860,
       height: 640
+    },
+    actions: {
+      toggleView: HotkeyVisualizer.#onToggleView
     }
   };
 
@@ -59,7 +66,12 @@ export class HotkeyVisualizer extends HandlebarsApplicationMixin(ApplicationV2) 
   /** @override */
   async _prepareContext(_options) {
     const { groups, total, hidden } = collectKeybindings({ respectVisibility: true });
+    const keyboardView = this.#view === "keyboard";
     return {
+      keyboard: keyboardView,
+      keyboardData: keyboardView ? buildKeyboardView() : null,
+      toggleIcon: keyboardView ? "fa-solid fa-list" : "fa-solid fa-keyboard",
+      toggleLabel: keyboardView ? "HOTKEYVIS.ViewList" : "HOTKEYVIS.ViewKeyboard",
       groups,
       total,
       hidden,
@@ -68,10 +80,16 @@ export class HotkeyVisualizer extends HandlebarsApplicationMixin(ApplicationV2) 
     };
   }
 
+  /** Switch between the list and keyboard views. */
+  static #onToggleView() {
+    this.#view = this.#view === "keyboard" ? "list" : "keyboard";
+    this.render({ parts: ["body"] });
+  }
+
   /** @override */
   _onRender(context, options) {
     super._onRender(context, options);
-    const search = this.element.querySelector('[data-action="search"]');
+    const search = this.element.querySelector(".hkv-search-input");
     if ( search ) search.addEventListener("input", this.#onSearch.bind(this));
   }
 

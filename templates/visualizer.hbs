@@ -1,16 +1,75 @@
 <div class="hotkey-visualizer-content">
   <header class="hotkey-visualizer-header">
-    <div class="hotkey-visualizer-search">
-      <i class="fa-solid fa-magnifying-glass"></i>
-      <input type="text" data-action="search"
-             placeholder="{{localize 'HOTKEYVIS.SearchPlaceholder'}}" autocomplete="off">
-    </div>
-    <div class="hotkey-visualizer-stats">
-      {{localize 'HOTKEYVIS.ShownCount' shown=shown total=total}}
-    </div>
+    {{#unless keyboard}}
+      <div class="hotkey-visualizer-search">
+        <i class="fa-solid fa-magnifying-glass"></i>
+        <input type="text" class="hkv-search-input"
+               placeholder="{{localize 'HOTKEYVIS.SearchPlaceholder'}}" autocomplete="off">
+      </div>
+      <div class="hotkey-visualizer-stats">
+        {{localize 'HOTKEYVIS.ShownCount' shown=shown total=total}}
+      </div>
+    {{else}}
+      <div class="hotkey-visualizer-kb-legend">
+        <span class="hotkey-visualizer-kb-legend-swatch"></span>
+        {{localize 'HOTKEYVIS.KeyboardLegend'}}
+      </div>
+    {{/unless}}
+    <button type="button" class="hotkey-visualizer-view-toggle" data-action="toggleView"
+            data-tooltip="{{localize toggleLabel}}">
+      <i class="{{toggleIcon}}"></i> {{localize toggleLabel}}
+    </button>
   </header>
 
-  {{#if empty}}
+  {{#if keyboard}}
+    <div class="hkv-keyboard-view">
+      <div class="hkv-keyboard">
+        {{#each keyboardData.rows as |row|}}
+          <div class="hkv-kb-row">
+            {{#each row as |key|}}
+              {{#if key.gap}}
+                <span class="hkv-kb-gap" style="flex-grow: {{key.width}};"></span>
+              {{else}}
+                <span class="hkv-kb-key {{#if key.highlighted}}bound{{/if}}" style="flex-grow: {{key.width}};"
+                      {{#if key.highlighted}}data-tooltip="{{key.tooltip}}"{{/if}}>{{key.label}}</span>
+              {{/if}}
+            {{/each}}
+          </div>
+        {{/each}}
+      </div>
+
+      <div class="hkv-keyboard-side">
+        <div class="hkv-keyboard hkv-nav">
+          {{#each keyboardData.nav as |row|}}
+            <div class="hkv-kb-row">
+              {{#each row as |key|}}
+                {{#if key.gap}}
+                  <span class="hkv-kb-gap"></span>
+                {{else}}
+                  <span class="hkv-kb-key {{#if key.highlighted}}bound{{/if}}"
+                        {{#if key.highlighted}}data-tooltip="{{key.tooltip}}"{{/if}}>{{key.label}}</span>
+                {{/if}}
+              {{/each}}
+            </div>
+          {{/each}}
+        </div>
+
+        <div class="hkv-mouse" aria-label="Mouse">
+          <div class="hkv-mouse-body">
+            <span class="hkv-mouse-btn mouse-left"></span>
+            <span class="hkv-mouse-btn mouse-right"></span>
+            <span class="hkv-mouse-btn mouse-middle"></span>
+          </div>
+          <ul class="hkv-mouse-list">
+            {{#each keyboardData.mouse as |btn|}}
+              <li class="hkv-mouse-row {{#if btn.highlighted}}bound{{/if}}"
+                  {{#if btn.highlighted}}data-tooltip="{{btn.tooltip}}"{{/if}}>{{btn.label}}</li>
+            {{/each}}
+          </ul>
+        </div>
+      </div>
+    </div>
+  {{else if empty}}
     <p class="hotkey-visualizer-empty notification">{{localize 'HOTKEYVIS.NoneVisible'}}</p>
   {{else}}
     <div class="hotkey-visualizer-list">

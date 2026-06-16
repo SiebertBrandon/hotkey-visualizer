@@ -37,7 +37,7 @@ export function registerSettings() {
     scope: "client",
     config: true,
     type: Number,
-    default: 0,
+    default: 40,
     onChange: () => repositionButton()
   });
   game.settings.register(MODULE_ID, SETTINGS.BUTTON_OFFSET_Y, {
@@ -46,7 +46,7 @@ export function registerSettings() {
     scope: "client",
     config: true,
     type: Number,
-    default: 0,
+    default: 2,
     onChange: () => repositionButton()
   });
 

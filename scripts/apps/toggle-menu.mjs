@@ -61,7 +61,7 @@ export class HotkeyToggleMenu extends HandlebarsApplicationMixin(ApplicationV2) 
   /** @override */
   _onRender(context, options) {
     super._onRender(context, options);
-    const search = this.element.querySelector('[data-action="search"]');
+    const search = this.element.querySelector(".hkv-search-input");
     if ( search ) search.addEventListener("input", this.#onSearch.bind(this));
   }
 

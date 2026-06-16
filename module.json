@@ -2,7 +2,7 @@
   "id": "hotkey-visualizer",
   "title": "Hotkey Visualizer",
   "description": "Adds a floating button near the players list that opens a window visualizing every keybinding available to the player — grouped by source, with modifier and condition details. Each keybind has an individual visibility toggle that GMs can lock with Nik's Settings Locks.",
-  "version": "1.0.1",
+  "version": "1.1.0",
   "authors": [
     {
       "name": "Brandon Siebert"

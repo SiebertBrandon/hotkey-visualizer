@@ -154,6 +154,31 @@ export function collectKeybindings({ respectVisibility = true } = {}) {
 }
 
 /**
+ * Build a map of physical key codes to the visible bindings that use them, for the
+ * keyboard view. Modifiers are kept with each binding so the tooltip can show e.g.
+ * "Ctrl + Shift + Action".
+ * @returns {Map<string, Array<{name: string, modifiers: Array<{label: string, cls: string}>}>>}
+ */
+export function collectKeyMap() {
+  /** @type {Map<string, Array>} */
+  const map = new Map();
+  const actions = game.keybindings?.actions ?? new Map();
+
+  for ( const [actionId, config] of actions.entries() ) {
+    if ( !isKeybindVisible(actionId) ) continue;
+    const namespace = config.namespace ?? actionId.split(".")[0] ?? "core";
+    const name = config.name ? game.i18n.localize(config.name) : actionId;
+    const bindings = game.keybindings.get(namespace, actionId.slice(namespace.length + 1)) ?? [];
+    for ( const b of bindings ) {
+      if ( !b.key ) continue;
+      if ( !map.has(b.key) ) map.set(b.key, []);
+      map.get(b.key).push({ name, modifiers: (b.modifiers ?? []).map(modifierChip) });
+    }
+  }
+  return map;
+}
+
+/**
  * Build condition badges (GM-only, repeatable) for a keybinding config.
  * @param {object} config
  * @returns {Array<{label: string, cls: string}>}
