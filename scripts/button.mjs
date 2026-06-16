@@ -47,12 +47,15 @@ export function repositionButton() {
   const offsetY = Number(game.settings.get(MODULE_ID, SETTINGS.BUTTON_OFFSET_Y)) || 0;
 
   const players = document.getElementById("players");
-  let baseLeft = 8;
-  let baseBottom = 8;
+  const gap = 8;
+  let baseLeft = gap;
+  let baseBottom = gap;
 
   if ( players ) {
     const rect = players.getBoundingClientRect();
-    baseLeft = rect.right + 8;
+    // Default to twice the distance from the left edge so the button sits clearly to
+    // the right of the players list. Fine-tune with the X offset setting.
+    baseLeft = (rect.right + gap) * 2;
     baseBottom = window.innerHeight - rect.bottom;
   }
 

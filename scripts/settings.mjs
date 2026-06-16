@@ -65,14 +65,20 @@ export function registerSettings() {
 
 /**
  * Register one client-scoped boolean visibility setting per registered keybinding.
+ *
+ * Idempotent: skips any action whose setting already exists. Called once on `setup`
+ * (for keybindings registered during `init`) and again on `ready` (to catch core and
+ * other keybindings that Foundry registers after module `setup` hooks run).
  */
-function registerKeybindVisibilitySettings() {
+export function registerKeybindVisibilitySettings() {
   const exposeInUI = game.settings.get(MODULE_ID, SETTINGS.EXPOSE_INDIVIDUAL);
   const actions = game.keybindings?.actions ?? new Map();
 
   for ( const [actionId, config] of actions.entries() ) {
+    const key = showSettingKey(actionId);
+    if ( game.settings.settings.has(`${MODULE_ID}.${key}`) ) continue;
     const name = config.name ? game.i18n.localize(config.name) : actionId;
-    game.settings.register(MODULE_ID, showSettingKey(actionId), {
+    game.settings.register(MODULE_ID, key, {
       name: game.i18n.format("HOTKEYVIS.Settings.ShowKeybind.Name", { name }),
       hint: "HOTKEYVIS.Settings.ShowKeybind.Hint",
       scope: "client",

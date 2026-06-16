@@ -6,6 +6,20 @@
 
 import { MODULE_ID, showSettingKey } from "./constants.mjs";
 
+/**
+ * Read a keybind's visibility setting defensively. Keybindings can be registered at
+ * different lifecycle stages (core registers some after module `setup`), so a setting
+ * may not exist yet for every action. Missing settings default to visible rather than
+ * throwing.
+ * @param {string} actionId
+ * @returns {boolean}
+ */
+function isKeybindVisible(actionId) {
+  const key = showSettingKey(actionId);
+  if ( !game.settings.settings.has(`${MODULE_ID}.${key}`) ) return true;
+  return game.settings.get(MODULE_ID, key) !== false;
+}
+
 /** @returns {typeof foundry.helpers.interaction.KeyboardManager} */
 function getKeyboardManager() {
   return foundry.helpers?.interaction?.KeyboardManager ?? globalThis.KeyboardManager;
@@ -94,7 +108,7 @@ export function collectKeybindings({ respectVisibility = true } = {}) {
   for ( const [actionId, config] of actions.entries() ) {
     total += 1;
 
-    const visible = game.settings.get(MODULE_ID, showSettingKey(actionId));
+    const visible = isKeybindVisible(actionId);
     if ( !visible ) hidden += 1;
     if ( respectVisibility && !visible ) continue;
 

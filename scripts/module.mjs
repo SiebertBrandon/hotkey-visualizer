@@ -6,7 +6,7 @@
  */
 
 import { MODULE_ID } from "./constants.mjs";
-import { registerSettings } from "./settings.mjs";
+import { registerSettings, registerKeybindVisibilitySettings } from "./settings.mjs";
 import { injectButton, repositionButton } from "./button.mjs";
 import { HotkeyVisualizer } from "./apps/visualizer.mjs";
 
@@ -17,6 +17,10 @@ Hooks.once("setup", () => {
 });
 
 Hooks.once("ready", () => {
+  // Core (and some module) keybindings are registered after module `setup` hooks,
+  // so register any remaining per-keybind visibility settings now that all exist.
+  registerKeybindVisibilitySettings();
+
   injectButton();
 
   // Expose a small API for macros / other modules.
